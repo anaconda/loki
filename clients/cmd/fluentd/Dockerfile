@@ -1,4 +1,4 @@
-FROM ruby:3.4.4 AS build
+FROM ruby:3.4.9 AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
