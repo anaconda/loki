@@ -19,7 +19,7 @@ require (
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.80.1
 	github.com/prometheus/client_golang v1.21.1
 	github.com/prometheus/common v0.62.0
-	github.com/prometheus/prometheus v0.55.0
+	github.com/prometheus/prometheus v0.311.3
 	github.com/stretchr/testify v1.10.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.32.2
