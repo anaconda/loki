@@ -89,7 +89,9 @@ func (b *basicLogger) Log(level LogLevel, msg string, keyvals ...any) {
 	if len(keyvals) > 0 {
 		buf.WriteString("; ")
 		format := strings.Repeat("%v: %v, ", len(keyvals)/2)
-		format = format[:len(format)-2] // trim trailing comma and space
+		if len(format) > 1 {
+			format = format[:len(format)-2] // trim trailing comma and space
+		}
 		fmt.Fprintf(buf, format, keyvals...)
 	}
 
@@ -122,3 +124,15 @@ func (w *wrappedLogger) Log(level LogLevel, msg string, keyvals ...any) {
 	}
 	w.inner.Log(level, msg, keyvals...)
 }
+
+// The following is a small helper you can copy into your own code to bridge a
+// kgo.Logger to packages that accept an anonymous logger function of the form
+// func(int8, string, ...any) - notably the sister 'sr' and 'kfake' packages,
+// which are initialized with a 'LogFn' option. It is intentionally not
+// exported (it would force a dependency edge); copy it where you need it:
+//
+// func loggerFn(l kgo.Logger) func(int8, string, ...any) {
+// 	return func(lvl int8, msg string, keyvals ...any) {
+// 		l.Log(kgo.LogLevel(lvl), msg, keyvals...)
+// 	}
+// }
