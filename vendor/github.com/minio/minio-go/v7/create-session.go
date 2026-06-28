@@ -88,14 +88,15 @@ func (c *Client) CreateSession(ctx context.Context, bucketName string, sessionMo
 		return credentials.Value{}, err
 	}
 
-	defer c.bucketSessionCache.Set(bucketName, cred)
-
-	return credentials.Value{
+	cred = credentials.Value{
 		AccessKeyID:     credSession.Credentials.AccessKey,
 		SecretAccessKey: credSession.Credentials.SecretKey,
 		SessionToken:    credSession.Credentials.SessionToken,
 		Expiration:      credSession.Credentials.Expiration,
-	}, nil
+	}
+
+	c.bucketSessionCache.Set(bucketName, cred)
+	return cred, nil
 }
 
 // createSessionRequest - Wrapper creates a new CreateSession request.
@@ -114,7 +115,7 @@ func (c *Client) createSessionRequest(ctx context.Context, bucketName string, se
 	if h, p, err := net.SplitHostPort(host); err == nil {
 		if targetURL.Scheme == "http" && p == "80" || targetURL.Scheme == "https" && p == "443" {
 			host = h
-			if ip := net.ParseIP(h); ip != nil && ip.To16() != nil {
+			if ip := net.ParseIP(h); ip != nil && ip.To4() == nil {
 				host = "[" + h + "]"
 			}
 		}
